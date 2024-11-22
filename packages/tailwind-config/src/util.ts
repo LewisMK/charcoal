@@ -90,12 +90,20 @@ export const flattenKey = <O extends object>(
   join?: (key: string) => boolean
 ) => {
   return Object.fromEntries(
-    // @ts-expect-error FIXME
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     Object.entries(o).flatMap(([key, v]) => {
-      if (typeof v === 'string') return [[key, v]]
+      if (typeof v === 'string') return [[key, `calc(${v} * 1px)`]]
       return Object.entries(v as object).map(([kk, vv]) => {
-        return [join?.(key) ?? true ? [key, kk].join('-') : kk, vv]
+        return [
+          join?.(key) ?? true ? [key, kk].join('-') : kk,
+          `calc(${vv} * 1px)`,
+        ]
       })
     })
   )
+}
+
+export function fixmeCalc1px(v: string) {
+  return `calc(${v} * 1px)`
 }
